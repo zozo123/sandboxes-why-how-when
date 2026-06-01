@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Sandbox Shift — a field manual for running untrusted code</title>
-  <meta name="description" content="Docker made code portable. Sandboxes make it safe to run — because the author isn't human anymore. A concise field manual on why, when & how to use execution sandboxes, for SWEs, MLEs, and AI researchers. With an interactive decider.">
+  <meta name="description" content="Docker made code portable. Sandboxes make AI-written code safe to run — and give an agent a whole computer to dev, test, build and ship in, end to end. A concise field manual on why, when & how, for SWEs, MLEs and AI researchers, with an interactive decider.">
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#1a1712">
 
@@ -14,7 +14,7 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://zozo123.github.io/sandboxes-why-how-when/">
   <meta property="og:title" content="The Sandbox Shift — a field manual for running untrusted code">
-  <meta property="og:description" content="Docker made code portable. Sandboxes make it safe to run. Why / when / how — for SWEs, MLEs & AI researchers, with an interactive decider.">
+  <meta property="og:description" content="Docker made code portable. Sandboxes make AI code safe to run — and let an agent dev, test, build and ship end to end. Why / when / how, with an interactive decider.">
   <meta property="og:image" content="https://zozo123.github.io/sandboxes-why-how-when/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -37,7 +37,7 @@
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "The Sandbox Shift",
-    "description": "Docker made code portable. Sandboxes make AI-written code safe to run. A field manual on why, when and how to use execution sandboxes.",
+    "description": "Docker made code portable. Sandboxes make AI-written code safe to run — and give an agent a whole computer to build in, end to end. A field manual on why, when and how.",
     "url": "https://zozo123.github.io/sandboxes-why-how-when/",
     "image": "https://zozo123.github.io/sandboxes-why-how-when/og.png",
     "datePublished": "2026-06-01",
@@ -57,7 +57,7 @@
     because the author isn't human anymore. It's a model, writing code faster than anyone can read it.
   </p>
   <p class="claim load" style="--d:.3s">Generation got cheap. <strong>Safe execution is the new bottleneck.</strong></p>
-  <p class="def load" style="--d:.4s"><span class="mk">sandbox · the unit</span>An isolated, ephemeral box that runs code with controlled reach into files, network &amp; secrets — then disappears. Spin one up in milliseconds; throw it away by the thousand.</p>
+  <p class="def load" style="--d:.4s"><span class="mk">sandbox · the unit</span>A disposable computer an agent works <i>inside</i> — it can edit, run, test, build &amp; ship there, with controlled reach into files, network &amp; secrets, then vanish. Safe enough to let a model run wild; complete enough to let it finish the job.</p>
   <nav class="jump load" style="--d:.5s" aria-label="Sections">
     <a href="#why">01 / Why</a><a href="#when">02 / When</a><a href="#how">03 / How</a><a href="#decide">⌗ Decide</a>
   </nav>
@@ -87,10 +87,25 @@
   </ol>
 </section>
 
+<!-- ============ WALL & WORKBENCH ============ -->
+<section class="sec alt">
+  <header class="sec-h reveal"><span class="idx">▣</span><h2>A wall, and a workbench</h2><span class="sec-line"></span></header>
+  <p class="lead reveal">Containment is only half the story. A sandbox is also the whole computer an agent works <i>inside</i> — one place to dev, test, build and deploy, where it takes a task end to end with no human in the seat.</p>
+  <p class="loop reveal">edit <i>→</i> run <i>→</i> test <i>→</i> build <i>→</i> deploy <i>→</i> observe <b>↺</b><span class="loop-note">the agent's loop — repeated autonomously, thousands of times over</span></p>
+  <p class="lead reveal" style="margin-top:1.2rem">Docker packaged the <i>artifact</i>: build, ship, run. The sandbox hands the agent the <strong>entire workflow — and the keys.</strong> Give it a box that can only run code and you get a calculator; give it one that can edit, build and ship, and you get a developer.</p>
+</section>
+
 <!-- ============ 02 WHEN ============ -->
-<section id="when" class="sec alt">
+<section id="when" class="sec">
   <header class="sec-h reveal"><span class="idx">02</span><h2>When</h2><span class="sec-line"></span></header>
-  <p class="lead reveal">Same primitive, three vantage points. Pick yours:</p>
+  <p class="lead reveal">Four jobs people actually reach for them:</p>
+  <ol class="uses reveal">
+    <li><span class="mk">dev</span><b>The harness's workshop</b>Give the coding agent — Claude Code &amp; friends — a box to develop in: edit, install, run, break things, without touching your laptop or your main branch.</li>
+    <li><span class="mk">test · eval</span><b>Prove it works</b>Run code you or your AI just wrote on a clean slate and grade it, before you trust a single line.</li>
+    <li><span class="mk">deploy</span><b>Ship AI-written code</b>Run model-authored code in production inside a contained runtime, where its blast radius is bounded by design.</li>
+    <li><span class="mk">parallel</span><b>Ten at once</b>Fork one environment ten ways and let agents chase ten features and bugs at the same time. Keep what passes; bin the rest.</li>
+  </ol>
+  <p class="lead reveal" style="margin-top:2.2rem">And the same primitive, by role — pick yours:</p>
 
   <div class="seg reveal" role="tablist" aria-label="Audience">
     <button id="tab-swe" role="tab" aria-selected="true"  aria-controls="panel-swe" data-p="swe">SWE</button>
@@ -134,7 +149,7 @@
 </section>
 
 <!-- ============ 03 HOW ============ -->
-<section id="how" class="sec">
+<section id="how" class="sec alt">
   <header class="sec-h reveal"><span class="idx">03</span><h2>How</h2><span class="sec-line"></span></header>
   <p class="lead reveal">An isolation ladder — weak &amp; fast at the bottom, strong &amp; heavy at the top. Pick the lowest rung that holds your threat model.</p>
 
@@ -153,7 +168,7 @@
 </section>
 
 <!-- ============ DECIDER ============ -->
-<section id="decide" class="sec alt">
+<section id="decide" class="sec">
   <header class="sec-h reveal"><span class="idx">⌗</span><h2>Decide</h2><span class="sec-line"></span></header>
   <p class="lead reveal">Four questions. Live verdict, recommended rung (it highlights the ladder), and placement. Nothing leaves your browser.</p>
 
@@ -195,12 +210,26 @@
 </section>
 
 <!-- ============ OBJECTIONS ============ -->
-<section class="sec ob">
+<section class="sec ob alt">
   <header class="sec-h reveal"><span class="idx">¶</span><h2>Isn't this just…?</h2><span class="sec-line"></span></header>
   <div class="obs">
     <p class="reveal"><b>…a VM?</b> In isolation terms, yes. The novelty is booting it in ~100&nbsp;ms and packing thousands per host — that economics is what makes per-rollout disposability possible at all.</p>
     <p class="reveal"><b>…containers?</b> Containers share the host kernel; one kernel CVE is an escape. Fine for code you trust, thin for unreviewed model output. That gap is why gVisor and microVMs exist.</p>
     <p class="reveal"><b>…hype? we've run untrusted code for decades.</b> True. What changed is authorship and volume: code is now machine-written, unreviewed, and generated faster than humans can vet. Isolation moves from edge case to default substrate.</p>
+  </div>
+</section>
+
+<!-- ============ LANDSCAPE + CTA ============ -->
+<section id="landscape" class="sec">
+  <header class="sec-h reveal"><span class="idx">⬡</span><h2>The landscape</h2><span class="sec-line"></span></header>
+  <p class="lead reveal">A vast, fast-moving market — converging on the same shape: fast, disposable, API-driven isolation.</p>
+  <p class="land-tags reveal">Daytona · E2B · Blacksmith · Tensorlake · exe.dev · Modal · islo.dev · …</p>
+  <p class="reveal" style="max-width:64ch">Pick any of them and the concepts on this page don't change. <code>crabbox.sh</code> exists so you don't have to choose blindly — it runs the same task across <em>every</em> provider, turning the sandbox into a commodity you can swap.</p>
+  <p class="bear reveal"><span class="mk">full disclosure</span>islo.dev is one of these providers — and it's ours. There's only one bear in town. 🐻</p>
+
+  <div class="cta reveal">
+    <p class="cta-kick">the bet</p>
+    <p class="cta-big">It's the container revolution again — at a far larger scale. Shipping software without sandboxes in 2026 is <span>not using Docker in 2016.</span></p>
   </div>
 </section>
 
@@ -211,8 +240,9 @@
   <p>Run untrusted code like you mean it. · <a href="https://github.com/zozo123/sandboxes-why-how-when">source</a> · design nods to <a href="https://github.com/zozo123/intel-story">intel-story</a></p>
   <p class="disc">
     <b style="color:#fff">Disclosure.</b> Written by <a href="https://www.linkedin.com/in/yossi-eliaz">Yossi&nbsp;Eliaz</a>,
-    who works with <b style="color:#e8dcc4">islo.dev</b> and actively contributes to <b style="color:#e8dcc4">crabbox.sh</b>.
-    This guide is kept deliberately vendor-neutral — providers are named only as a landscape, not a recommendation.
+    who works with <b style="color:#e8dcc4">islo.dev</b> (yes — the bear&nbsp;🐻) and actively contributes to
+    <b style="color:#e8dcc4">crabbox.sh</b>, which runs across every provider above.
+    The why / when / how is vendor-neutral; the landscape names names — ours included.
   </p>
 </footer>
 

@@ -221,6 +221,41 @@ h1 .dot { color: var(--hot); }
 .kicker .mk { display: block; color: #e8a07f; margin-bottom: .4rem; }
 .kicker strong { color: #fff; font-weight: 600; }
 
+/* ============ WORKBENCH — agent loop ============ */
+.loop {
+  font-family: var(--mono); font-weight: 600; text-transform: uppercase;
+  font-size: clamp(.9rem, 2.3vw, 1.3rem); letter-spacing: .03em; line-height: 1.9;
+  background: var(--ink); color: var(--paper);
+  padding: 1.15rem 1.35rem; border-radius: 2px; margin: 1.4rem 0; max-width: 64ch;
+}
+.loop i { color: #ff7a5c; font-style: normal; margin: 0 .2em; }
+.loop b { color: var(--hot); font-size: 1.25em; margin-left: .35em; }
+.loop .loop-note { display: block; font-family: var(--mono); font-weight: 400; text-transform: uppercase;
+  font-size: .66rem; letter-spacing: .16em; color: #b3a98f; margin-top: .8rem; }
+
+/* ============ USE CASES ============ */
+.uses { list-style: none; counter-reset: u; margin: 1.2rem 0 0; padding: 0; display: grid; gap: .8rem; }
+@media (min-width: 720px){ .uses { grid-template-columns: 1fr 1fr; } }
+.uses li { border: 1px solid var(--rule-2); border-radius: 2px; padding: 1.05rem 1.2rem;
+  background: rgba(255,255,255,.32); color: var(--ink-2); font-size: .96em; }
+.uses .mk { display: block; margin-bottom: .4rem; }
+.uses b { display: block; font-family: var(--display); font-weight: 600; font-size: 1.18rem;
+  color: var(--ink); margin-bottom: .3rem; }
+
+/* ============ LANDSCAPE + CTA ============ */
+.land-tags { font-family: var(--mono); font-weight: 600; font-size: clamp(.9rem,2vw,1.05rem);
+  letter-spacing: .03em; color: var(--hot-2); margin: .4rem 0 1.3rem; }
+.bear { margin-top: 1.5rem; max-width: 60ch; font-size: 1.02em; }
+.bear .mk { display: block; margin-bottom: .3rem; }
+.cta { margin-top: 2.4rem; background: var(--ink); color: var(--paper); border-radius: 2px;
+  padding: 1.8rem 2rem; border-left: 6px solid var(--hot); }
+.cta p { margin: 0; }
+.cta-kick { font-family: var(--mono); text-transform: uppercase; letter-spacing: .18em;
+  font-size: .7rem; color: #b3a98f; margin-bottom: .7rem !important; }
+.cta-big { font-family: var(--display); font-weight: 700; letter-spacing: -.02em; line-height: 1.12;
+  font-size: clamp(1.45rem, 4vw, 2.5rem); }
+.cta-big span { color: var(--hot); }
+
 /* ============ DECIDER ============ */
 .decider { display: grid; gap: 1.4rem; margin-top: 1.5rem; }
 @media (min-width: 880px){ .decider { grid-template-columns: 1.05fr .95fr; align-items: start; } }
