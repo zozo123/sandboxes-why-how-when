@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Sandbox Shift — why, when &amp; how to run untrusted code</title>
+  <meta name="description" content="Docker made code portable. Sandboxes make AI-written code safe to run. A concise, vendor-neutral field guide to why, when, and how to use execution sandboxes — with an interactive decider.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0b3d2e">
+
+  <!-- Open Graph / Twitter: make the HN/social unfurl look intentional -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The Sandbox Shift — why, when &amp; how to run untrusted code">
+  <meta property="og:description" content="Docker made code portable. Sandboxes make AI-written code safe to run. A vendor-neutral field guide, with an interactive 'do you need a sandbox?' decider.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Sandbox Shift">
+  <meta name="twitter:description" content="Docker made code portable. Sandboxes make AI-written code safe to run.">
+
+  <!-- Inline SVG favicon — no extra request -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b3d2e'/%3E%3Crect x='14' y='14' width='36' height='36' rx='6' fill='none' stroke='%230c9b6e' stroke-width='4' stroke-dasharray='7 5'/%3E%3Crect x='26' y='26' width='12' height='12' rx='2' fill='%23f5a623'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#why">Skip to content</a>
+
+<!-- ============================ HERO ============================ -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <p class="eyebrow">A field guide · 2026 · vendor-neutral</p>
+    <h1>The&nbsp;Sandbox<br><span class="hl">Shift</span></h1>
+    <p class="lede">
+      Docker made code <strong>portable</strong>. Sandboxes make code <strong>safe&nbsp;to&nbsp;run</strong> —
+      because the author is no longer a human you trust. It's a model, mid-reasoning,
+      writing code faster than anyone can review it.
+    </p>
+    <p class="thesis-claim">
+      The bet: this is a bigger inflection than containers were.
+      Generation got cheap. <strong>Safe execution is the new bottleneck.</strong>
+    </p>
+    <nav class="jump" aria-label="Section navigation">
+      <a href="#why">① Why</a>
+      <a href="#when">② When</a>
+      <a href="#decider">⌗ Decide</a>
+      <a href="#how">③ How</a>
+      <a href="#steelman">Objections</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================ THESIS ============================ -->
+<section class="band" id="thesis" aria-label="Containers versus sandboxes">
+  <div class="wrap">
+    <p class="eyebrow reveal">The shift, in one table</p>
+    <h2 class="reveal">Two revolutions, one assumption flipped</h2>
+    <div class="vs reveal">
+      <div class="vs-col">
+        <p class="vs-tag">Container era · ~2013</p>
+        <h3>Trusted human writes the code</h3>
+        <ul>
+          <li><b>Problem solved</b> — "works on my machine"</li>
+          <li><b>Goal</b> — portability + reproducibility</li>
+          <li><b>Lifetime</b> — long-lived, named, pets</li>
+          <li><b>Trust model</b> — code is reviewed &amp; vouched for</li>
+        </ul>
+      </div>
+      <div class="vs-mid" aria-hidden="true">→</div>
+      <div class="vs-col hot">
+        <p class="vs-tag">Sandbox era · now</p>
+        <h3>A model writes the code</h3>
+        <ul>
+          <li><b>Problem solved</b> — "run this untrusted thing safely"</li>
+          <li><b>Goal</b> — isolation, instant, disposable</li>
+          <li><b>Lifetime</b> — ephemeral, by the thousands, cattle</li>
+          <li><b>Trust model</b> — guilty until proven safe</li>
+        </ul>
+      </div>
+    </div>
+    <p class="aside reveal">
+      The isolation tech mostly already existed. What changed is <b>who writes the code</b> and
+      <b>how much of it there is</b>. That's enough to move sandboxing from an edge case to the
+      default substrate of agentic computing.
+    </p>
+  </div>
+</section>
+
+<!-- ============================ ACT 1 — WHY ============================ -->
+<section class="act" id="why">
+  <div class="wrap">
+    <p class="eyebrow reveal">Act ① — Why</p>
+    <h2 class="reveal">Five reasons the box exists</h2>
+    <div class="grid">
+
+      <article class="panel a1 reveal">
+        <span class="badge">1</span>
+        <h3>Untrusted author</h3>
+        <p>The code came from a model. It can carry a prompt-injected payload, a hallucinated
+          <code>rm -rf /</code>, or a typo'd package name that resolves to malware. You cannot
+          eyeball every rollout.</p>
+      </article>
+
+      <article class="panel a2 reveal">
+        <span class="badge">2</span>
+        <h3>Blast radius</h3>
+        <p>Contain what it can reach: the filesystem, network egress, environment secrets, and —
+          if isolation is weak — the host kernel itself. The sandbox is the wall, not a hope.</p>
+      </article>
+
+      <article class="panel a3 reveal">
+        <span class="badge">3</span>
+        <h3>Reproducibility</h3>
+        <p>Every run starts from identical, clean state. Without it, an eval's reward signal is
+          just noise — you can't tell a real improvement from leftover state in <code>/tmp</code>.</p>
+      </article>
+
+      <article class="panel a4 reveal">
+        <span class="badge">4</span>
+        <h3>Parallelism at scale</h3>
+        <p>RL and evals need thousands of <i>disposable</i> environments at once. That's only
+          affordable when a box is cheap to spawn, cheap to kill, and dense to pack.</p>
+      </article>
+
+      <article class="panel a5 reveal">
+        <span class="badge">5</span>
+        <h3>State control</h3>
+        <p>Snapshot, fork, and restore lets an agent branch its exploration without re-paying
+          setup cost — try five fixes from the same checkpoint, keep the one that passes.</p>
+      </article>
+
+      <article class="panel quote reveal">
+        <p class="big-quote">“If a human didn't read it, a sandbox should run it.”</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ACT 2 — WHEN ============================ -->
+<section class="act alt" id="when">
+  <div class="wrap">
+    <p class="eyebrow reveal">Act ② — When</p>
+    <h2 class="reveal">The lifecycle, and the trust boundary</h2>
+
+    <p class="reveal lead">Sandboxes show up at every stage where AI-authored code meets a real machine:</p>
+
+    <ol class="flow reveal" aria-label="Sandbox lifecycle">
+      <li><span class="step">exec</span><b>Fast ephemeral run</b><i>code interpreter, ad-hoc AI-gen Python, data analysis</i></li>
+      <li><span class="step">dev</span><b>Agent coding loops</b><i>a branch / worktree per task, throwaway on fail</i></li>
+      <li><span class="step">ci</span><b>Test &amp; build</b><i>a reproducible harness, no "works on my machine"</i></li>
+      <li><span class="step hot">eval</span><b>Evals &amp; RL</b><i>reasoning sandboxes that run harnesses</i></li>
+      <li><span class="step">prod</span><b>Production tools</b><i>agent code execution serving real users</i></li>
+    </ol>
+
+    <div class="harness reveal">
+      <p class="eyebrow">The phrase to remember</p>
+      <h3>A reasoning sandbox that runs a harness</h3>
+      <p>The eval / RL loop is the purest case. Each rollout is a fresh box:</p>
+      <pre><code><span class="c">// one rollout = one disposable sandbox</span>
+spawn  <span class="s">fresh sandbox</span>        <span class="c"># clean, identical state</span>
+setup  <span class="s">the task</span>             <span class="c"># clone repo @ ref, stage files</span>
+run    <span class="s">the agent's code</span>     <span class="c"># the untrusted part</span>
+score  <span class="k">reward</span> = harness()   <span class="c"># programmatic, no human grading</span>
+destroy <span class="s">everything</span>          <span class="c"># ×1000, in parallel</span></code></pre>
+    </div>
+
+    <p class="eyebrow reveal" style="margin-top:3rem">The decision that actually matters</p>
+    <h3 class="reveal">Inside the VPC, or outside it?</h3>
+    <p class="reveal lead">Two axes: how much you trust the <b>code</b>, and how sensitive the <b>data</b> it can reach.</p>
+
+    <div class="matrix reveal" role="img" aria-label="2x2 matrix: code trust against data sensitivity">
+      <div class="m-corner"></div>
+      <div class="m-top">Trusted code →</div>
+      <div class="m-top hot">Untrusted code →</div>
+
+      <div class="m-side">No&nbsp;sensitive data ↓</div>
+      <div class="m-cell">
+        <b>Run it locally</b>
+        <span>A sandbox is mostly overhead. Process limits are plenty.</span>
+      </div>
+      <div class="m-cell glow">
+        <b>Outside / public ephemeral</b>
+        <span>Untrusted code, zero access to crown jewels. Pure compute, lowest blast radius. The default for arbitrary AI-gen code.</span>
+      </div>
+
+      <div class="m-side">Private data&nbsp;/ internal ↓</div>
+      <div class="m-cell">
+        <b>Inside VPC, light isolation</b>
+        <span>Trusted code that needs real data. Standard internal tenancy.</span>
+      </div>
+      <div class="m-cell danger">
+        <b>Inside VPC, hard isolation</b>
+        <span>The hard case: untrusted code that <i>also</i> needs private data or internal services. Isolation now contains something with real network reach. Compliance + data-residency stakes are highest here.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ DECIDER ============================ -->
+<section class="act" id="decider">
+  <div class="wrap">
+    <p class="eyebrow reveal">Interactive · ⌗</p>
+    <h2 class="reveal">Do you actually need a sandbox?</h2>
+    <p class="reveal lead">Answer four questions. The verdict updates live — no data leaves your browser.</p>
+
+    <div class="decider reveal" id="decider-app">
+      <form class="d-form" id="d-form">
+        <fieldset class="q">
+          <legend>Who wrote the code you're about to run?</legend>
+          <label><input type="radio" name="author" value="0" checked> I did, or I've read it</label>
+          <label><input type="radio" name="author" value="1"> A teammate reviewed it</label>
+          <label><input type="radio" name="author" value="3"> A model wrote it — unreviewed</label>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend>What can the code reach?</legend>
+          <label><input type="radio" name="data" value="0" checked> Nothing sensitive</label>
+          <label><input type="radio" name="data" value="1"> Public data only</label>
+          <label><input type="radio" name="data" value="2"> Private data / internal services</label>
+          <label><input type="radio" name="data" value="3"> Production secrets</label>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend>How many times will it run?</legend>
+          <label><input type="radio" name="scale" value="0" checked> Once / occasionally</label>
+          <label><input type="radio" name="scale" value="1"> Interactive dev loop</label>
+          <label><input type="radio" name="scale" value="2"> Thousands, in parallel</label>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend>Does it need network egress?</legend>
+          <label><input type="radio" name="egress" value="0" checked> No network</label>
+          <label><input type="radio" name="egress" value="1"> Public internet</label>
+          <label><input type="radio" name="egress" value="2"> Internal services</label>
+        </fieldset>
+      </form>
+
+      <output class="d-out" id="d-out" for="d-form" aria-live="polite">
+        <noscript><p class="d-fallback">Enable JavaScript to compute a recommendation — or just read Act ③ below.</p></noscript>
+        <div class="d-verdict" id="d-verdict"><!-- filled by script.js --></div>
+        <p class="d-rationale" id="d-rationale"></p>
+        <div class="d-meta">
+          <div class="d-tier">
+            <span class="d-label">Isolation tier</span>
+            <strong id="d-tier-name">—</strong>
+          </div>
+          <div class="d-place">
+            <span class="d-label">Placement</span>
+            <strong id="d-place-name">—</strong>
+          </div>
+        </div>
+      </output>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ACT 3 — HOW ============================ -->
+<section class="act alt" id="how">
+  <div class="wrap">
+    <p class="eyebrow reveal">Act ③ — How</p>
+    <h2 class="reveal">The isolation ladder</h2>
+    <p class="reveal lead">Weak and fast at the bottom, strong and heavy at the top. Pick the lowest rung that holds your threat model. (The decider above highlights one for you.)</p>
+
+    <ol class="ladder reveal" id="ladder" aria-label="Isolation strength ladder, weakest first">
+      <li data-tier="0"><span class="rung">subprocess</span><span class="desc">Same kernel, same user. A timeout and a <code>ulimit</code>. Trusted code only.</span></li>
+      <li data-tier="1"><span class="rung">namespaces · cgroups · seccomp</span><span class="desc">nsjail, bubblewrap. Cheap kernel-level fencing. Good for semi-trusted code.</span></li>
+      <li data-tier="2"><span class="rung">container</span><span class="desc">runc / containerd. Shared kernel — one kernel CVE is an escape.</span></li>
+      <li data-tier="3"><span class="rung">gVisor</span><span class="desc">A user-space kernel intercepts syscalls. Container ergonomics, smaller attack surface.</span></li>
+      <li data-tier="4" class="sweet"><span class="rung">microVM <em>· Firecracker</em></span><span class="desc">Real VM boundary, boots in ~100&nbsp;ms, thousands per host. The agent-sandbox sweet spot.</span></li>
+      <li data-tier="5"><span class="rung">full VM · air-gapped</span><span class="desc">Maximum isolation, maximum cost. For the genuinely hostile.</span></li>
+    </ol>
+
+    <div class="tradeoff reveal">
+      <p class="eyebrow">The whole game in one line</p>
+      <p class="tradeoff-line">isolation strength <span>↔</span> startup latency <span>↔</span> density / cost</p>
+      <p>microVMs win for agents because they break the old rule that "VM-grade isolation means slow and expensive." ~100&nbsp;ms boots make <i>per-run disposability</i> economically real.</p>
+    </div>
+
+    <h3 class="reveal" style="margin-top:3rem">Operating patterns (regardless of tier)</h3>
+    <ul class="checks reveal">
+      <li>Ephemeral by default — destroy after every run.</li>
+      <li>Egress <b>deny-by-default</b>; allow-list only what's needed.</li>
+      <li>Scope secrets — forward one token, not the whole environment.</li>
+      <li>Hard resource caps — CPU, memory, and wall-clock time.</li>
+      <li>Snapshot / fork to skip repeated setup cost.</li>
+      <li>Exfil results over a narrow channel (e.g. a stdout sentinel), not a shared mount.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ STEELMAN ============================ -->
+<section class="act" id="steelman">
+  <div class="wrap">
+    <p class="eyebrow reveal">Objections, answered</p>
+    <h2 class="reveal">"But isn't this just…?"</h2>
+    <div class="grid two">
+      <article class="panel rebut reveal">
+        <h3>…just containers?</h3>
+        <p>Containers share the host kernel — one kernel CVE and you're out. Fine for code you
+          trust, thin for unreviewed model output. That gap is exactly why gVisor and microVMs exist.</p>
+      </article>
+      <article class="panel rebut reveal">
+        <h3>…just a VM with extra steps?</h3>
+        <p>In isolation terms, yes — and that's the point. The novelty isn't the boundary, it's
+          <b>booting it in ~100&nbsp;ms and packing thousands per host</b>. That economics is what makes
+          per-rollout disposability possible at all.</p>
+      </article>
+      <article class="panel rebut reveal">
+        <h3>…hype? we've run untrusted code for decades.</h3>
+        <p>True. cgi-bin, CI runners, online judges — none of it is new. What changed is
+          <b>volume and authorship</b>: code is now model-authored, unreviewed, and generated faster
+          than humans can vet. Isolation moves from special-case to default.</p>
+      </article>
+      <article class="panel rebut reveal">
+        <h3>…overkill for my script?</h3>
+        <p>Often, yes. If you wrote it and it touches nothing sensitive, a sandbox is overhead —
+          the decider above will tell you to just run it. The point isn't "always sandbox." It's
+          "match the box to the threat."</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LANDSCAPE ============================ -->
+<section class="band landscape" id="landscape">
+  <div class="wrap">
+    <p class="eyebrow reveal">A converging landscape</p>
+    <h2 class="reveal">Where the tooling is going</h2>
+    <p class="reveal lead">Not a recommendation — a map. Two broad camps, both trending toward fast, VM-grade, disposable isolation.</p>
+    <div class="land-cols reveal">
+      <div>
+        <h3>Self-hosted primitives</h3>
+        <p class="land-tags">Docker · containerd · gVisor · Firecracker · Kata · nsjail · bubblewrap</p>
+        <p>You own the kernel boundary and the bill. Maximum control, maximum ops.</p>
+      </div>
+      <div>
+        <h3>Managed sandbox platforms</h3>
+        <p class="land-tags">E2B · Modal · Daytona · and a growing field</p>
+        <p>An API spawns the box for you. Less control over the substrate, far less to run.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="foot">
+  <div class="wrap">
+    <p><b>The Sandbox Shift</b> — a vendor-neutral field guide.</p>
+    <p class="muted">Static page. No build step, no tracking, no cookies. Design inspired by
+      <a href="https://github.com/zozo123/intel-story">zozo123/intel-story</a>.</p>
+    <p class="muted">Run untrusted code like you mean it.</p>
+  </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="Back to top" title="Back to top">↑</button>
+
+<script src="script.js" defer></script>
+</body>
+</html>
