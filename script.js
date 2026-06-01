@@ -1,44 +1,46 @@
 /* The Sandbox Shift — tiny, no-deps interactivity.
-   Three things: scroll reveals, back-to-top, and the decider. */
+   Scroll reveals · the audience toggle · the decider. */
 (function () {
   "use strict";
 
-  /* ---------- 1. Scroll reveals ---------- */
+  /* ---------- scroll reveals ---------- */
   var reveals = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
         if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
     reveals.forEach(function (el) { io.observe(el); });
   } else {
     reveals.forEach(function (el) { el.classList.add("in"); });
   }
 
-  /* ---------- 2. Back to top ---------- */
-  var toTop = document.getElementById("totop");
-  if (toTop) {
-    var onScroll = function () {
-      if (window.scrollY > 600) { toTop.classList.add("show"); }
-      else { toTop.classList.remove("show"); }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    toTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  /* ---------- audience toggle (SWE / MLE / Researcher) ---------- */
+  var seg = document.querySelector(".seg");
+  var persona = document.getElementById("persona");
+  if (seg && persona) {
+    seg.addEventListener("click", function (ev) {
+      var btn = ev.target.closest("button[data-p]");
+      if (!btn) return;
+      var p = btn.getAttribute("data-p");
+      seg.querySelectorAll("button").forEach(function (b) {
+        b.setAttribute("aria-selected", String(b === btn));
+      });
+      persona.querySelectorAll("article").forEach(function (a) {
+        a.classList.toggle("on", a.getAttribute("data-p") === p);
+      });
     });
   }
 
-  /* ---------- 3. The decider ---------- */
-  // Isolation ladder rungs map 1:1 to <li data-tier> in the HTML.
+  /* ---------- the decider ---------- */
   var TIERS = [
-    "subprocess + limits",        // 0
-    "namespaces + seccomp",       // 1
-    "container",                  // 2
-    "gVisor",                     // 3
-    "microVM (Firecracker)",      // 4
-    "full VM / air-gapped"        // 5
+    "subprocess + limits",      // 0
+    "namespaces + seccomp",     // 1
+    "container",                // 2
+    "gVisor",                   // 3
+    "microVM (Firecracker)",    // 4
+    "full VM / air-gapped"      // 5
   ];
 
   var form = document.getElementById("d-form");
@@ -51,8 +53,8 @@
   var ladder      = document.getElementById("ladder");
 
   function val(name) {
-    var checked = form.querySelector('input[name="' + name + '"]:checked');
-    return checked ? parseInt(checked.value, 10) : 0;
+    var c = form.querySelector('input[name="' + name + '"]:checked');
+    return c ? parseInt(c.value, 10) : 0;
   }
 
   function compute() {
@@ -61,23 +63,20 @@
     var scale  = val("scale");  // 0 once · 1 dev · 2 thousands
     var egress = val("egress"); // 0 none · 1 public · 2 internal
 
-    // ---- tier: start from how much we distrust the code ----
+    // tier — start from how much we distrust the author
     var tier = 0;
-    if (author === 1) tier = 1;                 // reviewed → light fencing
-    if (author === 3) tier = 3;                 // unreviewed model code → gVisor floor
-    // untrusted code that can reach real data or the network → microVM
-    if (author === 3 && (data >= 2 || egress >= 1)) tier = 4;
-    // production secrets in reach → never go lighter than gVisor
-    if (data === 3 && tier < 3) tier = 3;
-    // thousands of disposable runs → microVMs earn their keep (fast boot + density)
-    if (scale === 2 && tier >= 2) tier = 4;
+    if (author === 1) tier = 1;
+    if (author === 3) tier = 3;                                   // unreviewed model code → gVisor floor
+    if (author === 3 && (data >= 2 || egress >= 1)) tier = 4;     // untrusted + real reach → microVM
+    if (data === 3 && tier < 3) tier = 3;                         // prod secrets in reach → never lighter than gVisor
+    if (scale === 2 && tier >= 2) tier = 4;                       // thousands of runs → microVM density wins
     if (tier > 5) tier = 5;
 
-    // ---- placement: inside the VPC vs outside / public ephemeral ----
+    // placement
     var needsInside = (data >= 2) || (egress === 2);
     var place = needsInside ? "Inside the VPC" : "Outside / public ephemeral";
 
-    // ---- verdict level 0..3 ----
+    // verdict level
     var level;
     if (author === 0 && data <= 1 && egress <= 1 && scale === 0) level = 0;
     else if (tier <= 1) level = 1;
@@ -91,23 +90,20 @@
       "Isolate aggressively — strongest box, tightest blast radius."
     ];
 
-    // ---- rationale, assembled from the real inputs ----
+    // rationale assembled from the inputs
     var bits = [];
-    if (author === 3) bits.push("the code is model-written and unreviewed");
-    else if (author === 1) bits.push("the code was reviewed");
-    else bits.push("you wrote or read the code");
-
-    if (data === 3) bits.push("it can reach production secrets");
-    else if (data === 2) bits.push("it can reach private data / internal services");
-    else if (data === 1) bits.push("it touches only public data");
-    else bits.push("it touches nothing sensitive");
-
+    bits.push(author === 3 ? "the code is model-written and unreviewed"
+            : author === 1 ? "the code was reviewed"
+            : "you wrote or read the code");
+    bits.push(data === 3 ? "it can reach production secrets"
+            : data === 2 ? "it can reach private data / internal services"
+            : data === 1 ? "it touches only public data"
+            : "it touches nothing sensitive");
     if (scale === 2) bits.push("and it runs thousands of times in parallel");
     else if (scale === 1) bits.push("in an interactive dev loop");
-
-    if (egress === 2) bits.push("with internal network egress");
-    else if (egress === 1) bits.push("with public-internet egress");
-    else bits.push("with no network");
+    bits.push(egress === 2 ? "with internal network egress"
+            : egress === 1 ? "with public-internet egress"
+            : "with no network");
 
     var rationale = "Because " + bits.join(", ") + ", aim for a "
       + TIERS[tier] + " boundary, " + place.toLowerCase() + ".";
@@ -116,22 +112,20 @@
         + "Add a timeout and a memory cap and move on.";
     }
 
-    // ---- paint ----
+    // paint
     elVerdict.textContent = VERDICTS[level];
     elVerdict.className = "d-verdict lvl" + level;
     elRationale.textContent = rationale;
     elTier.textContent = (level === 0) ? "none needed" : TIERS[tier];
     elPlace.textContent = (level === 0) ? "—" : place;
 
-    // ---- highlight the ladder rung ----
     if (ladder) {
       ladder.querySelectorAll("li").forEach(function (li) {
-        var t = parseInt(li.getAttribute("data-tier"), 10);
-        li.classList.toggle("pick", level !== 0 && t === tier);
+        li.classList.toggle("pick", level !== 0 && parseInt(li.getAttribute("data-tier"), 10) === tier);
       });
     }
   }
 
   form.addEventListener("change", compute);
-  compute(); // initial paint
+  compute();
 })();
