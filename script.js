@@ -16,20 +16,41 @@
     reveals.forEach(function (el) { el.classList.add("in"); });
   }
 
-  /* ---------- audience toggle (SWE / MLE / Researcher) ---------- */
+  /* ---------- audience toggle: ARIA tabs (SWE / MLE / Researcher) ---------- */
   var seg = document.querySelector(".seg");
   var persona = document.getElementById("persona");
   if (seg && persona) {
-    seg.addEventListener("click", function (ev) {
-      var btn = ev.target.closest("button[data-p]");
-      if (!btn) return;
+    var tabs = Array.prototype.slice.call(seg.querySelectorAll('button[role="tab"]'));
+
+    function selectTab(btn, focus) {
       var p = btn.getAttribute("data-p");
-      seg.querySelectorAll("button").forEach(function (b) {
-        b.setAttribute("aria-selected", String(b === btn));
+      tabs.forEach(function (b) {
+        var on = b === btn;
+        b.setAttribute("aria-selected", String(on));
+        b.tabIndex = on ? 0 : -1;
       });
       persona.querySelectorAll("article").forEach(function (a) {
         a.classList.toggle("on", a.getAttribute("data-p") === p);
       });
+      if (focus) btn.focus();
+    }
+
+    seg.addEventListener("click", function (ev) {
+      var btn = ev.target.closest('button[role="tab"]');
+      if (btn) selectTab(btn, false);
+    });
+
+    seg.addEventListener("keydown", function (ev) {
+      var i = tabs.indexOf(document.activeElement);
+      if (i < 0) return;
+      var n;
+      if (ev.key === "ArrowRight" || ev.key === "ArrowDown") n = (i + 1) % tabs.length;
+      else if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") n = (i - 1 + tabs.length) % tabs.length;
+      else if (ev.key === "Home") n = 0;
+      else if (ev.key === "End") n = tabs.length - 1;
+      else return;
+      ev.preventDefault();
+      selectTab(tabs[n], true);
     });
   }
 

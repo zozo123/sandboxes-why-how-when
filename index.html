@@ -8,20 +8,42 @@
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#1a1712">
 
+  <link rel="canonical" href="https://zozo123.github.io/sandboxes-why-how-when/">
+  <meta name="author" content="Yossi Eliaz">
+
   <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zozo123.github.io/sandboxes-why-how-when/">
   <meta property="og:title" content="The Sandbox Shift — a field manual for running untrusted code">
   <meta property="og:description" content="Docker made code portable. Sandboxes make it safe to run. Why / when / how — for SWEs, MLEs & AI researchers, with an interactive decider.">
+  <meta property="og:image" content="https://zozo123.github.io/sandboxes-why-how-when/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Sandbox Shift — a field manual for running untrusted code.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="The Sandbox Shift">
   <meta name="twitter:description" content="Docker made code portable. Sandboxes make AI-written code safe to run.">
+  <meta name="twitter:image" content="https://zozo123.github.io/sandboxes-why-how-when/og.png">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231a1712'/%3E%3Crect x='13' y='13' width='38' height='38' fill='none' stroke='%23e5421f' stroke-width='4' stroke-dasharray='8 5'/%3E%3Crect x='27' y='27' width='10' height='10' fill='%23e5421f'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "The Sandbox Shift",
+    "description": "Docker made code portable. Sandboxes make AI-written code safe to run. A field manual on why, when and how to use execution sandboxes.",
+    "url": "https://zozo123.github.io/sandboxes-why-how-when/",
+    "image": "https://zozo123.github.io/sandboxes-why-how-when/og.png",
+    "datePublished": "2026-06-01",
+    "author": { "@type": "Person", "name": "Yossi Eliaz", "url": "https://www.linkedin.com/in/yossi-eliaz" }
+  }
+  </script>
 </head>
 <body>
 <a class="skip" href="#why">Skip to content</a>
@@ -35,7 +57,8 @@
     because the author isn't human anymore. It's a model, writing code faster than anyone can read it.
   </p>
   <p class="claim load" style="--d:.3s">Generation got cheap. <strong>Safe execution is the new bottleneck.</strong></p>
-  <nav class="jump load" style="--d:.42s" aria-label="Sections">
+  <p class="def load" style="--d:.4s"><span class="mk">sandbox · the unit</span>An isolated, ephemeral box that runs code with controlled reach into files, network &amp; secrets — then disappears. Spin one up in milliseconds; throw it away by the thousand.</p>
+  <nav class="jump load" style="--d:.5s" aria-label="Sections">
     <a href="#why">01 / Why</a><a href="#when">02 / When</a><a href="#how">03 / How</a><a href="#decide">⌗ Decide</a>
   </nav>
 </header>
@@ -70,14 +93,14 @@
   <p class="lead reveal">Same primitive, three vantage points. Pick yours:</p>
 
   <div class="seg reveal" role="tablist" aria-label="Audience">
-    <button role="tab" aria-selected="true"  data-p="swe">SWE</button>
-    <button role="tab" aria-selected="false" data-p="mle">MLE</button>
-    <button role="tab" aria-selected="false" data-p="res">AI Researcher</button>
+    <button id="tab-swe" role="tab" aria-selected="true"  aria-controls="panel-swe" data-p="swe">SWE</button>
+    <button id="tab-mle" role="tab" aria-selected="false" aria-controls="panel-mle" tabindex="-1" data-p="mle">MLE</button>
+    <button id="tab-res" role="tab" aria-selected="false" aria-controls="panel-res" tabindex="-1" data-p="res">AI Researcher</button>
   </div>
 
   <div class="persona reveal" id="persona">
     <!-- SWE -->
-    <article data-p="swe" class="on">
+    <article id="panel-swe" role="tabpanel" aria-labelledby="tab-swe" tabindex="0" data-p="swe" class="on">
       <p class="p-lede">Agents now open PRs and run shell commands. You ship code no human fully reviewed.</p>
       <dl>
         <dt>Why</dt><dd>An autonomous coding agent's diff is untrusted input the moment it executes.</dd>
@@ -86,7 +109,7 @@
       </dl>
     </article>
     <!-- MLE -->
-    <article data-p="mle">
+    <article id="panel-mle" role="tabpanel" aria-labelledby="tab-mle" tabindex="0" data-p="mle">
       <p class="p-lede">Model-generated code and SQL run against real datasets and pipelines.</p>
       <dl>
         <dt>Why</dt><dd>The generated step touches data you actually care about — and might exfiltrate or corrupt it.</dd>
@@ -95,7 +118,7 @@
       </dl>
     </article>
     <!-- Researcher -->
-    <article data-p="res">
+    <article id="panel-res" role="tabpanel" aria-labelledby="tab-res" tabindex="0" data-p="res">
       <p class="p-lede">Every rollout and every eval runs untrusted code — thousands at once — and the reward must be reproducible.</p>
       <dl>
         <dt>Why</dt><dd>RL and evals <i>are</i> untrusted execution at scale; dirty state silently poisons the signal.</dd>
@@ -126,6 +149,7 @@
 
   <p class="tradeoff reveal">isolation strength<span>↔</span>boot latency<span>↔</span>density / cost</p>
   <p class="lead reveal" style="margin-top:.4rem">microVMs broke the old rule that VM-grade isolation must be slow and expensive — which is what makes <i>per-run disposability</i> economically real.</p>
+  <p class="kicker reveal"><span class="mk">the real lesson</span>Docker didn't beat LXC on isolation — it won on developer experience. Sandboxes get won the same way: <strong>the best API and the fastest boot, not the thickest wall.</strong></p>
 </section>
 
 <!-- ============ DECIDER ============ -->
@@ -134,7 +158,7 @@
   <p class="lead reveal">Four questions. Live verdict, recommended rung (it highlights the ladder), and placement. Nothing leaves your browser.</p>
 
   <div class="decider reveal">
-    <form id="d-form" class="d-form">
+    <form id="d-form" class="d-form" aria-label="Do you need a sandbox?">
       <fieldset class="q"><legend>Who wrote the code?</legend>
         <label><input type="radio" name="author" value="0" checked> I did, or I've read it</label>
         <label><input type="radio" name="author" value="1"> A teammate reviewed it</label>

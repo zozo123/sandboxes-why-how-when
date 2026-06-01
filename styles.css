@@ -8,9 +8,9 @@
   --paper:   #efe7d6;   /* warm bone */
   --paper-2: #e7dec9;   /* inset / alt */
   --ink:     #1b1813;
-  --ink-2:   #6a6253;   /* muted */
-  --hot:     #e5421f;   /* vermillion */
-  --hot-2:   #b9320e;
+  --ink-2:   #574f3e;   /* muted — darkened for AA contrast on bone */
+  --hot:     #e5421f;   /* vermillion (decorative / large only) */
+  --hot-2:   #a62c0b;   /* darker vermillion for small text & labels (AA) */
   --rule:    rgba(27,24,19,.18);
   --rule-2:  rgba(27,24,19,.34);
 
@@ -62,7 +62,11 @@ strong, b { font-weight: 600; }
   color: var(--hot-2);
   margin-right: .6rem;
 }
-.mk.hot { color: var(--hot); }
+.mk.hot { color: var(--hot-2); }
+
+/* visible keyboard focus everywhere */
+:focus-visible { outline: 2px solid var(--hot); outline-offset: 2px; border-radius: 1px; }
+.d-out :focus-visible, .foot :focus-visible { outline-color: #ff7a5c; }
 
 /* ---------- layout primitives ---------- */
 .mast, .sec, .foot, .strip { padding-inline: var(--pad); }
@@ -98,9 +102,11 @@ h1 .dot { color: var(--hot); }
   color: var(--ink-2);
 }
 .claim strong { color: var(--ink); }
+.def { max-width: 56ch; margin: 0 0 2.2rem; font-size: 1.04em; color: var(--ink); }
+.def .mk { display: block; margin-bottom: .35rem; }
 .jump { display: flex; flex-wrap: wrap; gap: 0; font-family: var(--mono); font-size: .78rem; }
 .jump a {
-  text-decoration: none; color: var(--ink); padding: .5rem .9rem;
+  text-decoration: none; color: var(--ink); padding: .65rem 1.05rem;
   border: 1px solid var(--rule-2); border-right-width: 0;
   transition: background .15s, color .15s;
 }
@@ -121,6 +127,8 @@ h1 .dot { color: var(--hot); }
 }
 .tn-h { font-family: var(--display); font-weight: 700; font-size: 1.25rem; margin: 0 0 .5rem; line-height: 1.1; }
 .tn-h .mk { display: block; margin: 0 0 .5rem; }
+.tn.now .tn-h .mk::before { content: ""; display: inline-block; width: .5em; height: .5em;
+  background: var(--hot); margin-right: .5em; }
 .tn p:last-child { margin: 0; color: var(--ink-2); font-size: .96em; }
 
 /* ============ SECTION HEADER ============ */
@@ -156,10 +164,10 @@ h1 .dot { color: var(--hot); }
 .seg button {
   font-family: var(--mono); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
   background: transparent; color: var(--ink-2); border: 0; border-right: 1px solid var(--rule-2);
-  padding: .6rem 1.1rem; cursor: pointer; transition: background .15s, color .15s;
+  padding: .75rem 1.2rem; min-height: 44px; cursor: pointer; transition: background .15s, color .15s;
 }
 .seg button:last-child { border-right: 0; }
-.seg button[aria-selected="true"] { background: var(--hot); color: #fff; }
+.seg button[aria-selected="true"] { background: var(--hot-2); color: #fff; }
 .seg button:hover:not([aria-selected="true"]) { background: rgba(27,24,19,.06); color: var(--ink); }
 
 .persona article { display: none; }
@@ -195,7 +203,7 @@ h1 .dot { color: var(--hot); }
 .ladder .d { grid-column: 2; color: var(--ink-2); font-size: .94em; }
 .ladder li.sweet { background: rgba(229,66,31,.07); }
 .ladder li.sweet::before { color: var(--hot); }
-.ladder li.sweet .rung::after { content: "· sweet spot"; color: var(--hot); font-family: var(--mono);
+.ladder li.sweet .rung::after { content: "· sweet spot"; color: var(--hot-2); font-family: var(--mono);
   font-size: .68rem; letter-spacing: .06em; margin-left: .5rem; text-transform: uppercase; }
 /* live highlight from the decider */
 .ladder li.pick { background: var(--ink); color: var(--paper); }
@@ -208,6 +216,10 @@ h1 .dot { color: var(--hot); }
   font-size: clamp(1.1rem, 3vw, 1.7rem); margin: 1.4rem 0 0; line-height: 1.2;
 }
 .tradeoff span { color: var(--hot); margin: 0 .5rem; font-weight: 600; }
+.kicker { max-width: 62ch; margin: 1.6rem 0 0; padding: 1.1rem 1.3rem; background: var(--ink);
+  color: #d6cdbb; border-radius: 2px; font-size: 1.02em; }
+.kicker .mk { display: block; color: #e8a07f; margin-bottom: .4rem; }
+.kicker strong { color: #fff; font-weight: 600; }
 
 /* ============ DECIDER ============ */
 .decider { display: grid; gap: 1.4rem; margin-top: 1.5rem; }

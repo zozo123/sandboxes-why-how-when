@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- Source for og.png — render at 1200x630 with headless Chrome. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=Newsreader:opsz,wght@6..72,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    background: #efe7d6;
+    background-image:
+      radial-gradient(circle at 82% 16%, rgba(229,66,31,.10), transparent 44%),
+      radial-gradient(circle at 10% 92%, rgba(27,24,19,.06), transparent 40%);
+    color: #1b1813;
+    font-family: "Newsreader", Georgia, serif;
+    padding: 58px 72px;
+    border-bottom: 14px solid #e5421f;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .top {
+    display: flex; justify-content: space-between;
+    font-family: "IBM Plex Mono", monospace; font-size: 17px; letter-spacing: .24em;
+    text-transform: uppercase; color: #574f3e;
+    border-bottom: 1.5px solid rgba(27,24,19,.3); padding-bottom: 18px;
+  }
+  .top b { color: #a62c0b; font-weight: 600; }
+  h1 {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 800;
+    font-size: 142px; line-height: .84; letter-spacing: -.04em;
+  }
+  h1 .dot { color: #e5421f; }
+  .sub { font-size: 33px; line-height: 1.32; max-width: 30ch; margin-top: 26px; }
+  .sub em { color: #a62c0b; font-style: italic; }
+  .foot {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: "IBM Plex Mono", monospace; font-size: 18px; letter-spacing: .12em;
+    text-transform: uppercase; color: #574f3e;
+  }
+  .foot .acc { color: #a62c0b; font-weight: 600; white-space: nowrap; }
+  .mark { position: absolute; right: 78px; top: 168px; width: 150px; height: 150px;
+    border: 7px dashed #e5421f; }
+  .mark::after { content: ""; position: absolute; inset: 50px; background: #1b1813; }
+</style>
+</head>
+<body>
+  <div class="top"><span><b>CONTAINMENT</b> · FIELD MANUAL · No.01</span><span>2026</span></div>
+  <div class="mark"></div>
+  <div class="mid">
+    <h1>The Sandbox<br>Shift<span class="dot">.</span></h1>
+    <p class="sub">Docker made code <em>portable</em>. Sandboxes make it <em>safe&nbsp;to&nbsp;run</em>.</p>
+  </div>
+  <div class="foot">
+    <span>Why · When · How — for SWEs, MLEs &amp; AI researchers</span>
+    <span class="acc">▣ run untrusted code</span>
+  </div>
+</body>
+</html>

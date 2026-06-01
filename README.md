@@ -28,6 +28,16 @@ It's a single static page. No build step, no framework, no tracking, no cookies.
 | `styles.css` | Editorial / infographic design system |
 | `script.js`  | Scroll reveals, back-to-top, the decider (no deps) |
 | `.nojekyll`  | Tells GitHub Pages to serve files as-is |
+| `og.png`     | 1200×630 social-share card (Open Graph / Twitter) |
+| `og-card.html` | Source for `og.png` — re-render with headless Chrome |
+
+Regenerate the share card after editing `og-card.html`:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless=new --disable-gpu --window-size=1200,630 --virtual-time-budget=4000 \
+  --screenshot="$PWD/og.png" "file://$PWD/og-card.html"
+```
 
 ## Run locally
 
