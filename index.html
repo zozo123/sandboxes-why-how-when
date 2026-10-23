@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Sandbox Shift — a field manual for running untrusted code</title>
-  <meta name="description" content="Docker made code portable. Sandboxes make AI-written code safe to run — and give an agent a whole computer to dev, test, build and ship in, end to end. A concise field manual on why, when & how, for SWEs, MLEs and AI researchers, with an interactive decider.">
+  <title>The Sandbox Shift: when to sandbox AI code · Yossi Eliaz</title>
+  <meta name="description" content="A field guide for engineers on why, when and how to run AI-written code in sandboxes, with an isolation ladder and an interactive decider.">
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#1a1712">
 
@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://zozo123.github.io/sandboxes-why-how-when/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="The Sandbox Shift — a field manual for running untrusted code.">
+  <meta property="og:image:alt" content="The Sandbox Shift — a field manual for running untrusted code, by Yossi Eliaz.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="The Sandbox Shift">
   <meta name="twitter:description" content="Docker made code portable. Sandboxes make AI-written code safe to run.">
@@ -38,11 +38,18 @@
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "The Sandbox Shift",
-    "description": "Docker made code portable. Sandboxes make AI-written code safe to run — and give an agent a whole computer to build in, end to end. A field manual on why, when and how.",
+    "description": "A field guide for engineers on why, when and how to run AI-written code in sandboxes, with an isolation ladder and an interactive decider.",
     "url": "https://zozo123.github.io/sandboxes-why-how-when/",
     "image": "https://zozo123.github.io/sandboxes-why-how-when/og.png",
     "datePublished": "2026-06-01",
-    "author": { "@type": "Person", "name": "Yossi Eliaz", "url": "https://www.linkedin.com/in/yossi-eliaz" }
+    "dateModified": "2026-10-22",
+    "mainEntityOfPage": "https://zozo123.github.io/sandboxes-why-how-when/",
+    "author": {
+      "@type": "Person",
+      "name": "Yossi Eliaz",
+      "url": "https://yossieliaz.netlify.app/",
+      "sameAs": ["https://github.com/zozo123", "https://zozo123.github.io/", "https://www.linkedin.com/in/yossi-eliaz/"]
+    }
   }
   </script>
 </head>
@@ -57,8 +64,10 @@
     Docker made code <em>portable</em>. Sandboxes make it <em>safe&nbsp;to&nbsp;run</em> —
     because the author isn't human anymore. It's a model, writing code faster than anyone can read it.
   </p>
+  <p class="lede load" style="--d:.24s">This guide explains when to run AI-written code in a sandbox, which isolation tier to pick (subprocess to full VM), and whether to place it inside or outside your VPC. It is written for software, ML and AI-research engineers.</p>
   <p class="claim load" style="--d:.3s">Generation got cheap. <strong>Safe execution is the new bottleneck.</strong></p>
-  <p class="def load" style="--d:.4s"><span class="mk">sandbox · the unit</span>A disposable computer an agent works <i>inside</i> — it can edit, run, test, build &amp; ship there, with controlled reach into files, network &amp; secrets, then vanish. Safe enough to let a model run wild; complete enough to let it finish the job.</p>
+  <p class="byline load" style="--d:.36s">By <a href="https://zozo123.github.io/">Yossi&nbsp;Eliaz</a> · <time datetime="2026-06-01">June&nbsp;1, 2026</time> · <a href="https://yossieliaz.netlify.app/">About&nbsp;the&nbsp;author</a></p>
+  <p class="def load" style="--d:.42s"><span class="mk">sandbox · the unit</span>A disposable computer an agent works <i>inside</i> — it can edit, run, test, build &amp; ship there, with controlled reach into files, network &amp; secrets, then vanish. Safe enough to let a model run wild; complete enough to let it finish the job.</p>
   <nav class="jump load" style="--d:.5s" aria-label="Sections">
     <a href="#why">01 / Why</a><a href="#when">02 / When</a><a href="#how">03 / How</a><a href="#decide">⌗ Decide</a>
   </nav>
@@ -139,7 +148,7 @@
       <dl>
         <dt>Why</dt><dd>RL and evals <i>are</i> untrusted execution at scale; dirty state silently poisons the signal.</dd>
         <dt>Where</dt><dd>RL environments · verifiable evals · <i>reasoning sandboxes that run harnesses</i>: spawn → set up task → run the agent's code → score → destroy.</dd>
-        <dt>The call</dt><dd>Disposability is the whole game → <b>microVMs: VM-grade isolation, ~100&nbsp;ms boot, thousands per host</b>.</dd>
+        <dt>The call</dt><dd>Disposability is the whole game → <b>microVMs: VM-grade isolation, under 125&nbsp;ms boot and thousands per host (Firecracker&rsquo;s figures)</b>.</dd>
       </dl>
     </article>
   </div>
@@ -159,7 +168,7 @@
     <li data-tier="1"><span class="rung">namespaces · cgroups · seccomp</span><span class="d">nsjail, bubblewrap. Cheap kernel-level fencing for semi-trusted code.</span></li>
     <li data-tier="2"><span class="rung">container</span><span class="d">runc / containerd. Shared kernel — one kernel CVE is an escape.</span></li>
     <li data-tier="3"><span class="rung">gVisor</span><span class="d">A user-space kernel intercepts syscalls. Container ergonomics, smaller attack surface.</span></li>
-    <li data-tier="4" class="sweet"><span class="rung">microVM · Firecracker</span><span class="d">A real VM boundary that boots in ~100&nbsp;ms, thousands per host. The agent sweet spot.</span></li>
+    <li data-tier="4" class="sweet"><span class="rung">microVM · Firecracker</span><span class="d">A real VM boundary that boots in under 125&nbsp;ms, thousands per host (per the <a href="https://firecracker-microvm.github.io/">Firecracker project</a>). The agent sweet spot.</span></li>
     <li data-tier="5"><span class="rung">full VM · air-gapped</span><span class="d">Maximum isolation, maximum cost. For the genuinely hostile.</span></li>
   </ol>
 
@@ -214,7 +223,7 @@
 <section class="sec ob alt">
   <header class="sec-h reveal"><span class="idx">¶</span><h2>Isn't this just…?</h2><span class="sec-line"></span></header>
   <div class="obs">
-    <p class="reveal"><b>…a VM?</b> In isolation terms, yes. The novelty is booting it in ~100&nbsp;ms and packing thousands per host — that economics is what makes per-rollout disposability possible at all.</p>
+    <p class="reveal"><b>…a VM?</b> In isolation terms, yes. The novelty is booting it in under 125&nbsp;ms and packing thousands per host (Firecracker&rsquo;s figures) — that economics is what makes per-rollout disposability possible at all.</p>
     <p class="reveal"><b>…containers?</b> Containers share the host kernel; one kernel CVE is an escape. Fine for code you trust, thin for unreviewed model output. That gap is why gVisor and microVMs exist.</p>
     <p class="reveal"><b>…hype? we've run untrusted code for decades.</b> True. What changed is authorship and volume: code is now machine-written, unreviewed, and generated faster than humans can vet. Isolation moves from edge case to default substrate.</p>
   </div>
@@ -225,12 +234,12 @@
   <header class="sec-h reveal"><span class="idx">⬡</span><h2>The landscape</h2><span class="sec-line"></span></header>
   <p class="lead reveal">A vast, fast-moving market — converging on the same shape: fast, disposable, API-driven isolation.</p>
   <p class="land-tags reveal">Daytona · E2B · Blacksmith · Tensorlake · exe.dev · Modal · islo.dev · …</p>
-  <p class="reveal" style="max-width:64ch">Pick any of them and the concepts on this page don't change. <code>crabbox.sh</code> exists so you don't have to choose blindly — it runs the same task across <em>every</em> provider, turning the sandbox into a commodity you can swap.</p>
-  <p class="bear reveal"><span class="mk">full disclosure</span>islo.dev is one of these providers — and it's ours. There's only one bear in town. 🐻</p>
+  <p class="reveal" style="max-width:64ch">Pick any of them and the concepts on this page don't change. <a href="https://crabbox.sh/">Crabbox</a> (<a href="https://github.com/openclaw/crabbox">openclaw/crabbox</a>) exists so you don't have to choose blindly — it runs the same task across many providers, all of the above included, turning the sandbox into a commodity you can swap.</p>
+  <p class="bear reveal"><span class="mk">disclosure</span>islo.dev is one of these providers. The author works at Incredibuild / islo.dev.</p>
 
   <div class="cta reveal">
     <p class="cta-kick">the bet</p>
-    <p class="cta-big">It's the container revolution again — at a far larger scale. Shipping software without sandboxes in 2026 is <span>not using Docker in 2016.</span></p>
+    <p class="cta-big">Sandboxes become as routine for AI-written code as <span>containers became for shipped code.</span></p>
   </div>
 </section>
 
@@ -238,12 +247,12 @@
 
 <footer class="foot">
   <p><b>The Sandbox Shift.</b> Static page — no build, no tracking, no cookies.</p>
-  <p>Run untrusted code like you mean it. · <a href="https://github.com/zozo123/sandboxes-why-how-when">source</a> · design nods to <a href="https://github.com/zozo123/intel-story">intel-story</a></p>
+  <p>Run untrusted code like you mean it. · <a href="https://github.com/zozo123/sandboxes-why-how-when">source</a> · design nods to <a href="https://github.com/zozo123/intel-story">intel-story</a> · <a href="https://zozo123.github.io/">more writing</a></p>
   <p class="disc">
-    <b style="color:#fff">Disclosure.</b> Written by <a href="https://www.linkedin.com/in/yossi-eliaz">Yossi&nbsp;Eliaz</a>,
-    who works with <b style="color:#e8dcc4">islo.dev</b> (yes — the bear&nbsp;🐻) and actively contributes to
-    <b style="color:#e8dcc4">crabbox.sh</b>, which runs across every provider above.
-    The why / when / how is vendor-neutral; the landscape names names — ours included.
+    <b style="color:#fff">Disclosure.</b> Written by <a href="https://yossieliaz.netlify.app/">Yossi&nbsp;Eliaz</a>,
+    who works at <b style="color:#e8dcc4">Incredibuild / islo.dev</b> and contributes to
+    <a href="https://github.com/openclaw/crabbox">Crabbox</a> (openclaw/crabbox), which runs across every provider above.
+    The why / when / how is provider-agnostic; the landscape names providers, including the author&rsquo;s employer.
   </p>
 </footer>
 
