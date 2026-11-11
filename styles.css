@@ -320,3 +320,7 @@ h1 .dot { color: var(--hot); }
   .load, .reveal { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
   .persona article.on { animation: none; }
 }
+
+@media print {
+  .load, .reveal, .persona article.on { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
